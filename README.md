@@ -56,3 +56,7 @@ command.
  * `cdk docs`        open CDK documentation
 
 Enjoy!
+
+## architecture
+
+![alt architecture](/order-service-architecture.png)
