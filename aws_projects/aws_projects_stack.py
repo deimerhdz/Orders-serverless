@@ -1,9 +1,11 @@
 from aws_cdk import (
-    # Duration,
+    CfnOutput,
     Stack,
-    # aws_sqs as sqs,
+    aws_lambda as _lambda,
+    aws_apigateway as apigateway,
 )
 from constructs import Construct
+
 
 class AwsProjectsStack(Stack):
 
@@ -12,8 +14,23 @@ class AwsProjectsStack(Stack):
 
         # The code that defines your stack goes here
 
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "AwsProjectsQueue",
-        #     visibility_timeout=Duration.seconds(300),
-        # )
+        hello_world_function = _lambda.Function(
+            self,
+            "HelloWorldFunction",
+            runtime=_lambda.Runtime.PYTHON_3_9,  # Choose any supported Node.js runtime
+            # Points to the lambda directory
+            code=_lambda.Code.from_asset("lambda"),
+            handler="hello.handler",  # Points to the 'hello' file in the lambda directory
+        )
+
+        api = apigateway.LambdaRestApi(
+            self,
+            "HelloWorldApi",
+            handler = hello_world_function,
+            proxy = False,
+        )
+        
+        # Define the '/hello' resource with a GET method
+        hello_resource = api.root.add_resource("hello")
+        hello_resource.add_method("GET")
+        
